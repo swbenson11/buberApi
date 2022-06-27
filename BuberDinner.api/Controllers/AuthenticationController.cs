@@ -2,20 +2,20 @@ using BuberDinner.application.Services.Authenticiation;
 using BuberDinner.contracts.Authenticiation;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BuberDiner.Api.Controllers;
+namespace BuberDinner.api.Controllers;
 
 [ApiController]
 [Route("auth")]
-public class AuthencicationController: ControllerBase
+public class AuthenticationController: ControllerBase
 {
    private readonly IAuthenticationService _authService;
-   public AuthencicationController(IAuthenticationService authService){
+   public AuthenticationController(IAuthenticationService authService){
       _authService = authService;
    }
 
    [HttpPost("register")]
-   public IActionResult Register(RegisterRequest request){
-      var authResult = _authService.Register(
+   public async Task<IActionResult> Register(RegisterRequest request){
+      var authResult = await _authService.Register(
          request.FirstName,
          request.LastName,
          request.Email,
@@ -33,8 +33,8 @@ public class AuthencicationController: ControllerBase
    }
 
    [HttpPost("login")]
-   public IActionResult Login(LoginRequest request){
-      var authResult = _authService.Login(
+   public async Task<IActionResult> Login(LoginRequest request){
+      var authResult = await _authService.Login(
          request.Email,
          request.Password
       );
