@@ -1,0 +1,8 @@
+Fix casing issue
+Remove weather report
+Create User service and save users to database
+Install auto linter
+Test:
+-Authenciation service
+
+- JwtTokenGenerator
