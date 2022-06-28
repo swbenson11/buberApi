@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 {
     builder.Services.AddBuberApplication();
-    builder.Services.AddBuberInfrastructure();
+    builder.Services.AddBuberInfrastructure(builder.Configuration);
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();

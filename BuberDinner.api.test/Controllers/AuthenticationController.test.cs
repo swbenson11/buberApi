@@ -18,7 +18,7 @@ public class AuthenticationControllerTest
             "Token"
         );
     private readonly string password = "P@ssword";
-    private AuthenticationController controller;
+    private AuthenticationController controller = null!;
         
     public void Setup(){
         controller = new AuthenticationController(serviceMock.Object);
