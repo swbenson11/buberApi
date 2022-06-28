@@ -9,49 +9,81 @@ namespace BuberDinner.api.test;
 
 public class AuthenticationControllerTest
 {
-    public readonly Mock<IAuthenticationService> serviceMock = new();
+    private readonly Mock<IAuthenticationService> serviceMock = new();
+    private readonly AuthenicationResult authResult = new AuthenicationResult(
+            System.Guid.NewGuid(),
+            "FirstName",
+            "LastName",
+            "Email@email.com",
+            "Token"
+        );
+    private readonly string password = "P@ssword";
+    private AuthenticationController controller;
+        
     public void Setup(){
-        // controller = new AuthenticationController(serviceMock);
+        controller = new AuthenticationController(serviceMock.Object);
     }
 
 
     [Fact]
     public async void Register_ValidCall()
     {
-        // mock out IAuthenticationService.Register
         var request = new RegisterRequest(
-            "FirstName",
-            "LastName",
-            "Email@email.com",
-            "Password"
+            authResult.FirstName, authResult.LastName, authResult.Email, password
         );
-        var mockResponse = new AuthenicationResult(
-            System.Guid.NewGuid(),
-            request.FirstName,
-            request.LastName,
-            request.Email,
-            "Token"
-        );
+
         serviceMock.Setup(x => x.Register(
             request.FirstName,
             request.LastName,
             request.Email,
             request.Password
-        )).Returns(Task.FromResult(mockResponse));
+        )).Returns(Task.FromResult(authResult));
         
-        var controller = new AuthenticationController(serviceMock.Object);
+        
         var result = await controller.Register(request)  as OkObjectResult;
+        
         Assert.Equal(200, result?.StatusCode);
         var expectedResult = new AuthenticationResponse(
-         mockResponse.Id,
-         mockResponse.FirstName,
-         mockResponse.LastName,
-         mockResponse.Email,
-         mockResponse.Token
+         authResult.Id,
+         authResult.FirstName,
+         authResult.LastName,
+         authResult.Email,
+         authResult.Token
         );
         Assert.Equal(JsonConvert.SerializeObject(expectedResult), JsonConvert.SerializeObject(result?.Value));
-        //Test mock is called with areguments
-        // Test results match mock results.
+        serviceMock.Verify(x => 
+            x.Register(            
+                request.FirstName,
+                request.LastName,
+                request.Email,
+                request.Password), 
+            Times.Once
+        );
         //   _dbServiceMock.Verify(x => x.SaveShoppingCartItem(It.IsAny<Product>()), Times.Never); 
+    }
+
+
+    [Fact]
+    public async void Login_ValidCall()
+    {
+        var request = new LoginRequest(authResult.Email, password);
+        serviceMock.Setup(x => x.Login(request.Email, request.Password))
+                .Returns(Task.FromResult(authResult));
+        
+        var result = await controller.Login(request)  as OkObjectResult;
+
+        Assert.Equal(200, result?.StatusCode);
+        var expectedResult = new AuthenticationResponse(
+         authResult.Id,
+         authResult.FirstName,
+         authResult.LastName,
+         authResult.Email,
+         authResult.Token
+        );
+        Assert.Equal(JsonConvert.SerializeObject(expectedResult), JsonConvert.SerializeObject(result?.Value));
+        serviceMock.Verify(x => 
+            x.Login(request.Email, request.Password), 
+            Times.Once
+        );
     }
 }
