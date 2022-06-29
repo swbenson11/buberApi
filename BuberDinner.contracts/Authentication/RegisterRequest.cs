@@ -1,4 +1,4 @@
-namespace BuberDinner.contracts.Authenticiation;
+namespace BuberDinner.contracts.Authentication;
 
 public record RegisterRequest(
    string FirstName,

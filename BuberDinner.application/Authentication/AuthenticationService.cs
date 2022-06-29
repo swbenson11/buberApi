@@ -34,13 +34,10 @@ public class AuthenticationService: IAuthenticationService
       Guid userId = Guid.NewGuid();
 
       //Create JWT Token
-      var token= _jwtTokenGenerator.GenerateToken(userId, firstName, lastName);
+      var token= _jwtTokenGenerator.GenerateToken(user);
 
       var result =  new AuthenticationResult(
-         Guid.NewGuid(),
-         firstName,
-         lastName,
-         email,
+         user,
          token
       );
       return result;
@@ -56,13 +53,10 @@ public class AuthenticationService: IAuthenticationService
          throw new Exception("Invalid Password.");
       }
 
-      var token = _jwtTokenGenerator.GenerateToken(user.Id, user.FirstName, user.LastName);
+      var token = _jwtTokenGenerator.GenerateToken(user);
 
       return new AuthenticationResult(
-         user.Id,
-         user.FirstName,
-         user.LastName,
-         email,
+         user,
          token
       );
    }

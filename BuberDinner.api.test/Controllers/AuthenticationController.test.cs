@@ -1,6 +1,7 @@
 using BuberDinner.api.Controllers;
 using BuberDinner.application.Services.Authentication;
-using BuberDinner.contracts.Authenticiation;
+using BuberDinner.contracts.Authentication;
+using BuberDinner.domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Newtonsoft.Json;
@@ -10,13 +11,13 @@ namespace BuberDinner.api.test;
 public class AuthenticationControllerTest
 {
     private readonly Mock<IAuthenticationService> serviceMock = new();
-    private readonly AuthenticationResult authResult = new AuthenticationResult(
-            System.Guid.NewGuid(),
-            "FirstName",
-            "LastName",
-            "Email@email.com",
-            "Token"
-        );
+    private static readonly User user = new User{
+            Id = System.Guid.NewGuid(),
+            FirstName ="FirstName",
+            LastName = "LastName",
+            Email ="Email@email.com"
+        };
+    private readonly AuthenticationResult authResult = new AuthenticationResult(user, "Token");
     private readonly string password = "P@ssword";
     private AuthenticationController controller = null!;
 
@@ -29,7 +30,7 @@ public class AuthenticationControllerTest
     public async void Register_ValidCall()
     {
         var request = new RegisterRequest(
-            authResult.FirstName, authResult.LastName, authResult.Email, password
+            user.FirstName, user.LastName, user.Email, password
         );
 
         serviceMock.Setup(x => x.Register(
@@ -44,10 +45,10 @@ public class AuthenticationControllerTest
         
         Assert.Equal(200, result?.StatusCode);
         var expectedResult = new AuthenticationResponse(
-         authResult.Id,
-         authResult.FirstName,
-         authResult.LastName,
-         authResult.Email,
+         authResult.User.Id,
+         authResult.User.FirstName,
+         authResult.User.LastName,
+         authResult.User.Email,
          authResult.Token
         );
         Assert.Equal(JsonConvert.SerializeObject(expectedResult), JsonConvert.SerializeObject(result?.Value));
@@ -66,7 +67,7 @@ public class AuthenticationControllerTest
     [Fact]
     public async void Login_ValidCall()
     {
-        var request = new LoginRequest(authResult.Email, password);
+        var request = new LoginRequest(authResult.User.Email, password);
         serviceMock.Setup(x => x.Login(request.Email, request.Password))
                 .Returns(Task.FromResult(authResult));
         
@@ -74,10 +75,10 @@ public class AuthenticationControllerTest
 
         Assert.Equal(200, result?.StatusCode);
         var expectedResult = new AuthenticationResponse(
-         authResult.Id,
-         authResult.FirstName,
-         authResult.LastName,
-         authResult.Email,
+         authResult.User.Id,
+         authResult.User.FirstName,
+         authResult.User.LastName,
+         authResult.User.Email,
          authResult.Token
         );
         Assert.Equal(JsonConvert.SerializeObject(expectedResult), JsonConvert.SerializeObject(result?.Value));
