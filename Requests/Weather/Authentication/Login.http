@@ -4,6 +4,6 @@ POST https://localhost:7215/auth/login
 Content-Type: application/json
 
 {
-   "email": "email@email.Ok",
+   "email": "email@email.emal",
    "password": "p@ssword"
 }

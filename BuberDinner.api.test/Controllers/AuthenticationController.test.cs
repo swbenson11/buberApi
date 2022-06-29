@@ -1,5 +1,5 @@
 using BuberDinner.api.Controllers;
-using BuberDinner.application.Services.Authenticiation;
+using BuberDinner.application.Services.Authentication;
 using BuberDinner.contracts.Authenticiation;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -10,7 +10,7 @@ namespace BuberDinner.api.test;
 public class AuthenticationControllerTest
 {
     private readonly Mock<IAuthenticationService> serviceMock = new();
-    private readonly AuthenicationResult authResult = new AuthenicationResult(
+    private readonly AuthenticationResult authResult = new AuthenticationResult(
             System.Guid.NewGuid(),
             "FirstName",
             "LastName",
@@ -19,8 +19,8 @@ public class AuthenticationControllerTest
         );
     private readonly string password = "P@ssword";
     private AuthenticationController controller = null!;
-        
-    public void Setup(){
+
+    public AuthenticationControllerTest(){
         controller = new AuthenticationController(serviceMock.Object);
     }
 

@@ -1,4 +1,4 @@
-using BuberDinner.application.Services.Authenticiation;
+using BuberDinner.application.Services.Authentication;
 using BuberDinner.contracts.Authenticiation;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,6 +34,7 @@ public class AuthenticationController: ControllerBase
 
    [HttpPost("login")]
    public async Task<IActionResult> Login(LoginRequest request){
+      // Note: you could  wrap this in a timer so that failed log in attempts aren't longer when the email is found
       var authResult = await _authService.Login(
          request.Email,
          request.Password

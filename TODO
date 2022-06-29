@@ -2,7 +2,9 @@ Fix casing issue
 Remove weather report
 Create User service and save users to database
 Install auto linter
+Make user repo async
 Test:
--Authenciation service
 
+- Authentication service
+- Tests with repo
 - JwtTokenGenerator

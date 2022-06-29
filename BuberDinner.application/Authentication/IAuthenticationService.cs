@@ -1,7 +1,7 @@
-namespace BuberDinner.application.Services.Authenticiation;
+namespace BuberDinner.application.Services.Authentication;
 
 public interface IAuthenticationService
 {
-   Task<AuthenicationResult> Register(string firstName, string lastNamer, string email, string password);
-   Task<AuthenicationResult> Login(string email, string password);
+   Task<AuthenticationResult> Register(string firstName, string lastNamer, string email, string password);
+   Task<AuthenticationResult> Login(string email, string password);
 }
