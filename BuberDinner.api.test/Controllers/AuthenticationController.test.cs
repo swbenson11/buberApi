@@ -6,7 +6,7 @@ using BuberDinner.domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Newtonsoft.Json;
-using OneOf;
+using ErrorOr;
 
 namespace BuberDinner.api.test;
 
@@ -40,7 +40,7 @@ public class AuthenticationControllerTest
             request.LastName,
             request.Email,
             request.Password
-        )).Returns(Task.FromResult((OneOf<AuthenticationResult, IProcessedError>)authResult));
+        )).Returns(Task.FromResult((ErrorOr<AuthenticationResult>)authResult));
         
         
         var result = await controller.Register(request)  as OkObjectResult;
@@ -71,7 +71,7 @@ public class AuthenticationControllerTest
     {
         var request = new LoginRequest(authResult.User.Email, password);
         serviceMock.Setup(x => x.Login(request.Email, request.Password))
-                .Returns(Task.FromResult(authResult));
+                .Returns(Task.FromResult((ErrorOr<AuthenticationResult>)authResult));
         
         var result = await controller.Login(request)  as OkObjectResult;
 
