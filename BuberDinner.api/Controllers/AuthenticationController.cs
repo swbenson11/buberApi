@@ -1,3 +1,4 @@
+using BuberDinner.Api.Controllers;
 using BuberDinner.application.Services.Authentication;
 using BuberDinner.contracts.Authentication;
 using ErrorOr;
@@ -5,9 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BuberDinner.api.Controllers;
 
-[ApiController]
 [Route("auth")]
-public class AuthenticationController: ControllerBase
+public class AuthenticationController: ApiController
 {
    private readonly IAuthenticationService _authService;
    public AuthenticationController(IAuthenticationService authService){
@@ -24,8 +24,7 @@ public class AuthenticationController: ControllerBase
       );
 
       if(registerResult.IsError){
-         var problemData = ErrorHandling.processErrorToProblem(registerResult.FirstError);
-         return Problem(statusCode: problemData?.Status,  detail: problemData?.Detail, title: problemData?.Title);
+         return Problem(registerResult.FirstError);
       }
 
       var authResult = registerResult.Value;

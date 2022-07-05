@@ -1,10 +1,10 @@
+using BuberDinner.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BuberDinner.api.Controllers;
 
-[ApiController]
 [Route("[controller]")]
-public class WeatherForecastController : ControllerBase
+public class WeatherForecastController: ApiController
 {
     private static readonly string[] Summaries = new[]
     {
