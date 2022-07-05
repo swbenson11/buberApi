@@ -1,10 +1,12 @@
 using BuberDinner.api.Controllers;
+using BuberDinner.application.Common.Errors;
 using BuberDinner.application.Services.Authentication;
 using BuberDinner.contracts.Authentication;
 using BuberDinner.domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Newtonsoft.Json;
+using OneOf;
 
 namespace BuberDinner.api.test;
 
@@ -38,7 +40,7 @@ public class AuthenticationControllerTest
             request.LastName,
             request.Email,
             request.Password
-        )).Returns(Task.FromResult(authResult));
+        )).Returns(Task.FromResult((OneOf<AuthenticationResult, IProcessedError>)authResult));
         
         
         var result = await controller.Register(request)  as OkObjectResult;

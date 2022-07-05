@@ -3,6 +3,7 @@ using BuberDinner.application.Common.Interfaces.Authentication;
 using BuberDinner.application.Common.Interfaces.Persistence;
 
 using BuberDinner.domain.Entities;
+using OneOf;
 
 namespace BuberDinner.application.Services.Authentication;
 
@@ -18,10 +19,10 @@ public class AuthenticationService: IAuthenticationService
    }
 
    // Marked this as a Task to see what the code would look like, even then my repos aren't Async yet. 
-   public async Task<AuthenticationResult> Register(string firstName, string lastName, string email, string password){
+   public async Task<OneOf<AuthenticationResult, IProcessedError>> Register(string firstName, string lastName, string email, string password){
       // Check if user already exists
       if(_userRepo.GetUserByEmail(email) is not null){
-         throw new DuplicateEmailException();
+         return new DuplicateEmailError();
       }
 
       var user = new User {
