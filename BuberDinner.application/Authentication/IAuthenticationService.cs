@@ -1,10 +1,10 @@
-using BuberDinner.application.Common.Errors;
-using OneOf;
+
+using ErrorOr;
 
 namespace BuberDinner.application.Services.Authentication;
 
 public interface IAuthenticationService
 {
-   Task<OneOf<AuthenticationResult, IProcessedError>> Register(string firstName, string lastNamer, string email, string password);
-   Task<AuthenticationResult> Login(string email, string password);
+   Task<ErrorOr<AuthenticationResult>> Register(string firstName, string lastNamer, string email, string password);
+   Task<ErrorOr<AuthenticationResult>> Login(string email, string password);
 }

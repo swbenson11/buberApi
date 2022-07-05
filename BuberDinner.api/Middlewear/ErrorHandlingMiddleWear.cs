@@ -1,3 +1,5 @@
+// Not used, here for reference
+
 using System.Net;
 using System.Text.Json;
 

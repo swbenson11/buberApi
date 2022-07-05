@@ -1,9 +1,9 @@
-using BuberDinner.application.Common.Errors;
 using BuberDinner.application.Common.Interfaces.Authentication;
 using BuberDinner.application.Common.Interfaces.Persistence;
 
 using BuberDinner.domain.Entities;
-using OneOf;
+using BuberDinner.Domain.Common.Errors;
+using ErrorOr;
 
 namespace BuberDinner.application.Services.Authentication;
 
@@ -19,10 +19,10 @@ public class AuthenticationService: IAuthenticationService
    }
 
    // Marked this as a Task to see what the code would look like, even then my repos aren't Async yet. 
-   public async Task<OneOf<AuthenticationResult, IProcessedError>> Register(string firstName, string lastName, string email, string password){
+   public async Task<ErrorOr<AuthenticationResult>> Register(string firstName, string lastName, string email, string password){
       // Check if user already exists
       if(_userRepo.GetUserByEmail(email) is not null){
-         return new DuplicateEmailError();
+         return Errors.User.DuplicateEmail;
       }
 
       var user = new User {
@@ -45,15 +45,15 @@ public class AuthenticationService: IAuthenticationService
       );
       return result;
    }
-   public async Task<AuthenticationResult> Login(string email, string password){
+   public async Task<ErrorOr<AuthenticationResult>> Login(string email, string password){
       // Note: this could use customer errors which could be caught by the controller and turned into http error codes. 
 
       if(_userRepo.GetUserByEmail(email) is not User user){ // cool trick
-         throw new Exception("User with given email does not exist.");
+        return Errors.Authentication.InvalidCredentials;
       }
 
       if(user.Password != password){
-         throw new Exception("Invalid Password.");
+         return Errors.Authentication.InvalidCredentials;
       }
 
       var token = _jwtTokenGenerator.GenerateToken(user);

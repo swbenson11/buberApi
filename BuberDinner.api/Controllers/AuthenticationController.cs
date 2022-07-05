@@ -1,6 +1,6 @@
-using BuberDinner.application.Common.Errors;
 using BuberDinner.application.Services.Authentication;
 using BuberDinner.contracts.Authentication;
+using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BuberDinner.api.Controllers;
@@ -23,17 +23,12 @@ public class AuthenticationController: ControllerBase
          request.Password
       );
 
-      // TODO this could be a utility class
-      if(registerResult.IsT1){
-         var error = registerResult.AsT1;
-         // I deliberately did not put statusCode in the IProcessedError. I don't want services interpreting and dictating 
-         // Status codes to higher level classes
-         var statusCode = error.GetType() == typeof(DuplicateEmailError) ? StatusCodes.Status409Conflict: StatusCodes.Status500InternalServerError;
-
-         return Problem(statusCode: statusCode, title: error.ErrorMessage);
+      if(registerResult.IsError){
+         var problemData = ErrorHandling.processErrorToProblem(registerResult.FirstError);
+         return Problem(statusCode: problemData?.Status,  detail: problemData?.Detail, title: problemData?.Title);
       }
 
-      var authResult = registerResult.AsT0;
+      var authResult = registerResult.Value;
       var response = new AuthenticationResponse(
          authResult.User.Id,
          authResult.User.FirstName,
@@ -52,12 +47,20 @@ public class AuthenticationController: ControllerBase
          request.Email,
          request.Password
       );
+
+      if(authResult.IsError){
+         var error = authResult.FirstError;
+         var statusCode = error.Type == ErrorType.Conflict ? StatusCodes.Status409Conflict: StatusCodes.Status500InternalServerError;
+         // Title for use in error parsing in front end.
+         return Problem(statusCode: statusCode,  detail: error.Description, title: error.Code);
+      }
+
       var response = new AuthenticationResponse(
-         authResult.User.Id,
-         authResult.User.FirstName,
-         authResult.User.LastName,
-         authResult.User.Email,
-         authResult.Token
+         authResult.Value.User.Id,
+         authResult.Value.User.FirstName,
+         authResult.Value.User.LastName,
+         authResult.Value.User.Email,
+         authResult.Value.Token
       );
 
       return Ok(response);
