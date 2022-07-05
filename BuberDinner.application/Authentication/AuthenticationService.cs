@@ -1,5 +1,7 @@
+using BuberDinner.application.Common.Errors;
 using BuberDinner.application.Common.Interfaces.Authentication;
 using BuberDinner.application.Common.Interfaces.Persistence;
+
 using BuberDinner.domain.Entities;
 
 namespace BuberDinner.application.Services.Authentication;
@@ -19,7 +21,7 @@ public class AuthenticationService: IAuthenticationService
    public async Task<AuthenticationResult> Register(string firstName, string lastName, string email, string password){
       // Check if user already exists
       if(_userRepo.GetUserByEmail(email) is not null){
-         throw new Exception("User with given email already exists.");
+         throw new DuplicateEmailException();
       }
 
       var user = new User {
